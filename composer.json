@@ -1,0 +1,44 @@
+{
+  "name": "ice-php/redistable",
+  "description": "对Redis进行表,行,结果集封装",
+  "keywords": [
+    "icePHP",
+    "table",
+    "redis"
+  ],
+  "homepage": "https://github.com/ice-php/redistable",
+  "type": "composer",
+  "license": "MIT",
+  "support": {
+    "source": "https://github.com/ice-php/redistable"
+  },
+  "authors": [
+    {
+      "name": "blueice",
+      "email": "liyong@nenu.edu.cn"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.0",
+    "ice-php/redis": "dev-master",
+    "ice-php/table": "dev-master"
+  },
+  "minimum-stability": "dev",
+  "autoload": {
+    "files": [
+      "src/functions.php"
+    ],
+    "psr-4": {
+      "icePHP\\": "src"
+    }
+  },
+  "repositories": {
+    "packagist": {
+      "type": "composer",
+      "url": "https://packagist.org"
+    }
+  },
+  "config": {
+    "process-timeout": 1800
+  }
+}
