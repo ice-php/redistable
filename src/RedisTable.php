@@ -40,7 +40,6 @@ class RedisTable
      * 获取索引表对象(zSet)
      * @param $orderBy string 排序字段
      * @return RedisSortedSet
-     * @throws RedisException
      */
     private function index($orderBy)
     {
@@ -62,7 +61,6 @@ class RedisTable
     /**
      * 获取数据表对象
      * @return RedisHash
-     * @throws RedisException
      */
     private function data()
     {
@@ -84,7 +82,6 @@ class RedisTable
     /**
      * 获取自增长ID对象
      * @return RedisInt
-     * @throws RedisException
      */
     private function id()
     {
@@ -110,13 +107,13 @@ class RedisTable
      * @param $length int 分页长度
      * @param bool $desc 是否降序
      * @return Result
-     * @throws RedisTableException|RedisException|MysqlException|TableException
+     * @throws RedisTableException
      */
-    public function select(string $orderBy, $min, $max, int $offset, int $length, bool $desc = false):Result
+    public function select(string $orderBy, $min, $max, int $offset, int $length, bool $desc = false): Result
     {
         //必须是创建表时指定的排序字段
         if (!in_array($orderBy, $this->orderBy)) {
-            throw new RedisTableException('排序字段必须事先定义:'.$orderBy,RedisTableException::UNDEFINED_ORDER_FIELD);
+            throw new RedisTableException('排序字段必须事先定义:' . $orderBy, RedisTableException::UNDEFINED_ORDER_FIELD);
         }
 
         //取索引
@@ -139,13 +136,17 @@ class RedisTable
      * 插入一行数据
      * @param array $row 要插入的数据
      * @return int 新的ID
-     * @throws RedisException
      */
     public function insert(array $row)
     {
         //创建自增长ID,并加入数据中
         $idObj = $this->id();
-        $newId = $idObj->crease();
+        try {
+            $newId = $idObj->crease();
+        } catch (RedisException $e) {
+            trigger_error('不可能到达这里', E_USER_ERROR);
+            exit;
+        }
         $row['redisId'] = $newId;
 
         //以JSON格式存储到HASH表中
@@ -166,7 +167,6 @@ class RedisTable
      * 取一行数据
      * @param $id int REDIS编号
      * @return Row
-     * @throws RedisException|TableException|MysqlException
      */
     public function row($id)
     {
@@ -181,7 +181,6 @@ class RedisTable
      * @param $id int 行编号
      * @param array $row 行数据
      * @return int 行编号
-     * @throws RedisException|TableException|MysqlException
      */
     public function update($id, array $row)
     {
@@ -206,7 +205,6 @@ class RedisTable
     /**
      * 删除一行数据
      * @param $id int 行编号
-     * @throws RedisException
      */
     public function delete($id)
     {
