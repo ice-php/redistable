@@ -171,7 +171,7 @@ class RedisTable
     public function row(int $id)
     {
         $dataObj = $this->data();
-        $row = json_decode($dataObj->get($id), true);
+        $row = json_decode($dataObj->get(strval($id)), true);
 
         return new Row($this->name, $row);
     }
