@@ -151,7 +151,7 @@ class RedisTable
 
         //以JSON格式存储到HASH表中
         $dataObj = $this->data();
-        $dataObj->set($newId, json($row));
+        $dataObj->set(strval($newId), json($row));
 
         //添加索引
         foreach ($this->orderBy as $orderBy) {
@@ -192,7 +192,7 @@ class RedisTable
 
         //保存数据
         $dataObj = $this->data();
-        $dataObj->set($id, json($row));
+        $dataObj->set(strval($id), json($row));
 
         //保存索引
         foreach ($this->orderBy as $orderBy) {
