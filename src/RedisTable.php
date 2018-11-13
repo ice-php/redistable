@@ -168,7 +168,7 @@ class RedisTable
      * @param $id int REDIS编号
      * @return Row
      */
-    public function row($id)
+    public function row(int $id)
     {
         $dataObj = $this->data();
         $row = json_decode($dataObj->get($id), true);
