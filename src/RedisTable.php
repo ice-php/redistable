@@ -23,7 +23,7 @@ class RedisTable
      * @param $name string 表名
      * @param $orderBy string|array 需要索引的字段(列表)
      */
-    public function __construct($name, $orderBy = null)
+    public function __construct(string $name, $orderBy = null)
     {
         //表名(实际以前缀表示)
         $this->name = $name;
@@ -41,7 +41,7 @@ class RedisTable
      * @param $orderBy string 排序字段
      * @return RedisSortedSet
      */
-    private function index($orderBy)
+    private function index(string $orderBy): RedisSortedSet
     {
         //REDIS的键,
         $key = $this->name . ':INDEX:' . $orderBy;
@@ -102,18 +102,17 @@ class RedisTable
      * 查询
      * @param $orderBy string  排序的字段
      * @param $min float|int 下限
-     * @param $max float}int 上限
+     * @param $max float|int 上限
      * @param $offset int 分页偏移
      * @param $length int 分页长度
      * @param bool $desc 是否降序
      * @return Result
-     * @throws RedisTableException
      */
-    public function select(string $orderBy, $min, $max, int $offset, int $length, bool $desc = false): Result
+    public function select(string $orderBy, int $offset, int $length, bool $desc = false, $min = 0, $max = PHP_INT_MAX): Result
     {
         //必须是创建表时指定的排序字段
         if (!in_array($orderBy, $this->orderBy)) {
-            throw new RedisTableException('排序字段必须事先定义:' . $orderBy, RedisTableException::UNDEFINED_ORDER_FIELD);
+            trigger_error('排序字段必须事先定义:' . $orderBy, E_USER_ERROR);
         }
 
         //取索引
@@ -130,6 +129,19 @@ class RedisTable
         }
 
         return new Result($this->name, $ret);
+    }
+
+    /**
+     * 判断指定的记录是否存在
+     * @param string $orderBy 索引名称
+     * @param $val mixed 值
+     * @return bool
+     */
+    public function exists(string $orderBy, $val): bool
+    {
+        $index = $this->index($orderBy);
+        $cnt = $index->count($val, $val);
+        return intval($cnt) > 0;
     }
 
     /**
