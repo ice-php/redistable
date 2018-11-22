@@ -139,8 +139,9 @@ class RedisTable
      */
     public function exists(string $orderBy, $val): bool
     {
+        $val=strval($val);
         $index = $this->index($orderBy);
-        $cnt = $index->count($val, $val);
+        $cnt = $index->count($val,$val);
         return intval($cnt) > 0;
     }
 
